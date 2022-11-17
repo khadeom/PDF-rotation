@@ -13,10 +13,10 @@ class PDFModel(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	outputPath = db.Column(db.String(100), nullable=False)
 	angleOfRotation = db.Column(db.Integer, nullable=False)
-	number = db.Column(db.Integer, nullable=False)
+	pageNumber = db.Column(db.Integer, nullable=False)
 
 	def __repr__(self):
-		return f"pdf(name = {outputPath}, angleOfRotation = {angleOfRotation}, number = {number})"
+		return f"pdf(name = {outputPath}, angleOfRotation = {angleOfRotation}, pageNumber = {pageNumber})"
 
 
 db.drop_all()
@@ -24,14 +24,14 @@ db.create_all()
 
 pdf_post_args = reqparse.RequestParser()
 pdf_post_args.add_argument("filePath", type=str, help="filePath of the pdf is required", required=True)
-pdf_post_args.add_argument("angleOfRotation", type=int, help="angleOfRotation of the pdf", required=True)
-pdf_post_args.add_argument("number", type=int, help="number on the pdf", required=True)
+pdf_post_args.add_argument("angleOfRotation", type=int, help="angleOfRotation of the page", required=True)
+pdf_post_args.add_argument("pageNumber", type=int, help="pageNumber of page that is to be rotated", required=True)
 
 resource_fields = {
 	'id': fields.Integer,
 	'outputPath': fields.String,
 	'angleOfRotation': fields.Integer,
-	'number': fields.Integer
+	'pageNumber': fields.Integer
 }
 
 from rotatePdf import rotate
@@ -56,9 +56,9 @@ class RotatePdf(Resource):
 		if result:
 			abort(409, message="PDF id taken...")
 
-		outputPath = rotate(args['filePath'], args['angleOfRotation'],args['number'])
+		outputPath = rotate(args['filePath'], args['angleOfRotation'],args['pageNumber'])
 
-		pdf = PDFModel(id=pdf_id, outputPath=outputPath, angleOfRotation=args['angleOfRotation'], number=args['number'])
+		pdf = PDFModel(id=pdf_id, outputPath=outputPath, angleOfRotation=args['angleOfRotation'], pageNumber=args['pageNumber'])
 		db.session.add(pdf)
 		db.session.commit()
 		return pdf
