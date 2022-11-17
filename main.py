@@ -19,8 +19,8 @@ class PDFModel(db.Model):
 		return f"pdf(name = {outputPath}, angleOfRotation = {angleOfRotation}, number = {number})"
 
 
-# db.drop_all()
-# db.create_all()
+db.drop_all()
+db.create_all()
 
 pdf_post_args = reqparse.RequestParser()
 pdf_post_args.add_argument("filePath", type=str, help="filePath of the pdf is required", required=True)
@@ -48,6 +48,7 @@ class RotatePdf(Resource):
 
 		return result
 
+	@marshal_with(resource_fields)
 	def post(self, pdf_id):
 
 		args = pdf_post_args.parse_args()
@@ -60,10 +61,7 @@ class RotatePdf(Resource):
 		pdf = PDFModel(id=pdf_id, outputPath=outputPath, angleOfRotation=args['angleOfRotation'], number=args['number'])
 		db.session.add(pdf)
 		db.session.commit()
-		# print(args)
-		return {'id': pdf.id,'filePath':args['filePath'],'angleOfRotation': args['angleOfRotation'],'number': args['number']}
-
-
+		return pdf
 
 
 api.add_resource(RotatePdf, "/pdf/<int:pdf_id>")

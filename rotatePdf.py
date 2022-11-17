@@ -13,9 +13,10 @@ def rotate(fileName,degree,number):
             page.rotateClockwise(degree)
         pdf_writer.addPage(page)
 
-    pdf_out = open('tmp/test.pdf', 'wb')
+    path = "tmp/test_"+fileName.split("/")[-1]
+    pdf_out = open(path, 'wb')
     pdf_writer.write(pdf_out)
     pdf_out.close()
     pdf_in.close()
-    return 'tmp/test.pdf'
+    return path
 
